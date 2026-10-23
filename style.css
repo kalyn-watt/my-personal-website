@@ -4641,3 +4641,31 @@ footer.site-footer {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* Homepage links under the bio */
+.landing-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-left: -10px;
+}
+
+.landing-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: #000000;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.landing-link svg {
+  display: block;
+}
+
+.landing-link:hover,
+.landing-link:focus-visible {
+  background: #000000;
+  color: #ffffff;
+}
