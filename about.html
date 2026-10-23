@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Kalyn Watt</title>
+  <meta name="description" content="About Kalyn Watt: an interdisciplinary designer with a background in information and psychology.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=177">
+</head>
+<body class="page-landing">
+
+  <header class="landing-header">
+    <a class="landing-logo" href="index.html">
+      <span class="landing-logo-dot"></span>
+      <span class="landing-logo-text">kalyn watt / design</span>
+    </a>
+  </header>
+
+  <main class="landing-play">
+    <div class="landing-tabs">
+      <a class="landing-tab" href="index.html">
+        <span>WORK</span>
+        <span class="landing-tab-line"><img src="assets/tab-line-inactive.svg" alt=""></span>
+      </a>
+      <a class="landing-tab" href="playground.html">
+        <span>PLAY</span>
+        <span class="landing-tab-line"><img src="assets/tab-line-inactive.svg" alt=""></span>
+      </a>
+      <a class="landing-tab" href="about.html" aria-current="page">
+        <span>ABOUT</span>
+        <span class="landing-tab-line landing-tab-line--active"><img src="assets/tab-line-active.svg" alt=""></span>
+      </a>
+    </div>
+
+    <p class="landing-bio about-bio">Interdisciplinary designer with a background in information and psychology. Crafting digital experiences rooted in innovation, data, empathy, and a little bit of whimsy.<span class="about-more"> But also a(n)...</span></p>
+  </main>
+  <div class="about-phrases" aria-hidden="true"></div>
+
+  <script>
+    (function () {
+      var bio = document.querySelector(".about-bio");
+      var layer = document.querySelector(".about-phrases");
+      if (!bio || !layer) return;
+
+      var phrases = [
+        "Citrus lover",
+        "Bananagrams player",
+        "Dinner party hoster",
+        "Long car ride karaoke singer",
+        "Knitter",
+        "Radish pickler",
+        "Kombucha brewer",
+        "Avid thrifter",
+        "Wishful thinker",
+        "Disco music enjoyer",
+        "Inconsistent runner",
+        "Sample sale shopper",
+        "Vogue doomscroller",
+        "Social advocate",
+        "Jasmine tea drinker"
+      ];
+
+      function rect(el) {
+        var r = el.getBoundingClientRect();
+        return { l: r.left, t: r.top, r: r.right, b: r.bottom };
+      }
+
+      function hits(a, b, pad) {
+        return !(a.r + pad < b.l || a.l - pad > b.r || a.b + pad < b.t || a.t - pad > b.b);
+      }
+
+      function scatter() {
+        layer.innerHTML = "";
+        var vw = window.innerWidth, vh = window.innerHeight;
+        var blocked = [];
+        [".landing-header", ".landing-tabs", ".about-bio"].forEach(function (s) {
+          var el = document.querySelector(s);
+          if (el) blocked.push(rect(el));
+        });
+        var placed = [];
+        var margin = 24;
+
+        phrases.forEach(function (text, i) {
+          var el = document.createElement("span");
+          el.className = "about-phrase";
+          el.textContent = text;
+          el.style.setProperty("--delay", (i * 45) + "ms");
+          el.style.setProperty("--tilt", (Math.random() * 12 - 6).toFixed(1) + "deg");
+          layer.appendChild(el);
+          var w = el.offsetWidth, h = el.offsetHeight;
+
+          var spot = null;
+          for (var tries = 0; tries < 80 && !spot; tries++) {
+            var x = margin + Math.random() * Math.max(1, vw - w - margin * 2);
+            var y = margin + Math.random() * Math.max(1, vh - h - margin * 2);
+            var box = { l: x, t: y, r: x + w, b: y + h };
+            var ok = blocked.every(function (b) { return !hits(box, b, 16); }) &&
+              placed.every(function (p) { return !hits(box, p, 10); });
+            if (ok) spot = box;
+          }
+          if (!spot) {
+            var fx = margin + Math.random() * Math.max(1, vw - w - margin * 2);
+            var fy = margin + Math.random() * Math.max(1, vh - h - margin * 2);
+            spot = { l: fx, t: fy, r: fx + w, b: fy + h };
+          }
+          placed.push(spot);
+          el.style.left = spot.l + "px";
+          el.style.top = spot.t + "px";
+        });
+
+        /* let the browser register the start state before fading in */
+        void layer.offsetWidth;
+        layer.classList.add("is-on");
+      }
+
+      function clear() {
+        layer.classList.remove("is-on");
+      }
+
+      bio.addEventListener("mouseenter", scatter);
+      bio.addEventListener("mouseleave", clear);
+    })();
+  </script>
+</body>
+</html>

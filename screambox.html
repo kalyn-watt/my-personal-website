@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Screambox — Kalyn Watt</title>
+  <meta name="description" content="Screambox: a touch sensor distortion amplifier built from e-waste at an NYC Resistor workshop, February 11th, 2026.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=177">
+</head>
+<body class="page-lamma">
+
+  <div class="sb-top">
+    <header class="landing-header">
+      <a class="landing-logo" href="index.html">
+        <span class="landing-logo-dot"></span>
+        <span class="landing-logo-text">kalyn watt / design</span>
+      </a>
+    </header>
+    <header class="sb-header">
+      <a class="case-back case-back--lg" href="playground.html"><small>&lt; </small>BACK</a>
+    </header>
+  </div>
+
+  <div class="sb">
+
+    <div class="sb-nav-track">
+      <nav class="case-nav sb-nav" aria-label="Steps">
+        <a href="#intro" aria-current="true"><span>00 | INTRO</span></a>
+        <a href="#step-1"><span>01 | DISASSEMBLING</span></a>
+        <a href="#step-2"><span>02 | CONNECTING</span></a>
+        <a href="#step-3"><span>03 | FINAL</span></a>
+      </nav>
+    </div>
+
+    <section class="sb-section sb-intro" id="intro">
+      <img class="sb-hero" src="assets/screambox/intro.png" alt="">
+      <div class="sb-col sb-intro-info">
+        <div class="sb-meta">
+          <p>NYC Resistor Workshop</p>
+          <p>February 11th, 2026</p>
+        </div>
+        <div class="sb-materials">
+          <p>Materials used</p>
+          <ul>
+            <li>A piece of e-waste with a speaker component</li>
+            <li>9V battery</li>
+            <li>LM386 (mono amplifier)</li>
+            <li>Power switch</li>
+            <li>1/4&rdquo; input</li>
+            <li>A slew of screwdrivers and jump cables</li>
+            <li>Wire cutter &amp; stripper</li>
+            <li>Solderer &amp; soldering wire</li>
+            <li>Cardboard</li>
+            <li>Tape</li>
+            <li>Box cutter</li>
+          </ul>
+        </div>
+      </div>
+      <h1 class="sb-title">Screambox: Touch sensor distortion amplifier</h1>
+    </section>
+
+    <section class="sb-section sb-step sb-step--1" id="step-1">
+      <div class="sb-col sb-split">
+        <div class="sb-text">
+          <p>01 | Fetch speaker component from e-waste</p>
+          <div class="sb-body">
+            <p>I used an assortment of scissors and screwdrivers to cut away the mesh and pry open the plastic.</p>
+            <p>I was able to unscrew the speaker component once the speaker guard was removed.</p>
+          </div>
+        </div>
+        <div class="sb-photos">
+          <img src="assets/screambox/step1-a.jpg" alt="Speaker component being pried out of the e-waste" loading="lazy">
+          <img src="assets/screambox/step1-b.jpg" alt="Speaker component removed from its plastic housing" loading="lazy">
+        </div>
+      </div>
+    </section>
+
+    <section class="sb-section sb-step sb-step--2" id="step-2">
+      <div class="sb-col sb-stack">
+        <div class="sb-hover">
+          <p class="sb-hover-title">02 | Connect all materials</p>
+          <ol class="sb-hover-list">
+            <li>Connected the VCC jumper cable to the battery.</li>
+            <li>Connected GND cable to the power switch.</li>
+            <li>Connected the remaining two cables to the 1/4&rdquo; input jack.</li>
+          </ol>
+          <div class="sb-board">
+            <img class="sb-board-photo" src="assets/screambox/step2-board.jpg" alt="Speaker, battery, amplifier and jumper cables laid out on a workbench" loading="lazy">
+            <div class="sb-chip">
+              <span class="sb-chip-box" tabindex="0"></span>
+              <p class="sb-chip-caption">
+                <span class="sb-chip-a">What is an LM386 audio amplifier? (hover)</span>
+                <span class="sb-chip-b">LM386: a low-voltage audio power amplifier chip that boosts a small signal enough to drive a speaker.</span>
+              </p>
+            </div>
+            <div class="sb-notes" aria-hidden="true">
+              <span class="sb-num sb-num--1">1</span>
+              <span class="sb-num sb-num--2">2</span>
+              <span class="sb-num sb-num--3">3</span>
+              <span class="sb-arrow sb-arrow--1"><span><img src="assets/screambox/arrow-1.svg" alt=""></span></span>
+              <span class="sb-arrow sb-arrow--2"><span class="sb-arrow-rot"><span class="sb-arrow-box"><span><img src="assets/screambox/arrow-2.svg" alt=""></span></span></span></span>
+              <span class="sb-arrow sb-arrow--3"><span><img src="assets/screambox/arrow-3.svg" alt=""></span></span>
+              <span class="sb-arrow sb-arrow--4"><span><img src="assets/screambox/arrow-4.svg" alt=""></span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sb-row">
+          <p class="sb-row-text">02.1 | Soldering and realizing I burnt my hair..</p>
+          <video class="sb-row-video" src="assets/screambox/step2-solder.mp4" muted loop playsinline preload="none" aria-label="Screen recording of soldering"></video>
+        </div>
+
+        <div class="sb-wide">
+          <p class="sb-row-text">02.2 | Hear that screeeeeaaaammmm</p>
+          <div class="sb-wide-media" role="img" aria-label="Recording of the finished Screambox screaming"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sb-section sb-step sb-step--3" id="step-3">
+      <div class="sb-col sb-split">
+        <div class="sb-text">
+          <p>03 | Build a home for the amplifier</p>
+          <div class="sb-body">
+            <p>I forgot to take progress pictures, but here is the final product!!</p>
+            <p>The last step was housing all of the components. I did that via a Zapp&rsquo;s chip box and masking tape.</p>
+          </div>
+        </div>
+        <div class="sb-photos">
+          <img src="assets/screambox/step3-a.jpg" alt="The finished Screambox in its chip-box housing" loading="lazy">
+          <img src="assets/screambox/step3-b.jpg" alt="The finished Screambox, second angle" loading="lazy">
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      var top = document.querySelector(".sb-top");
+      function measureTop() {
+        document.documentElement.style.setProperty("--sb-top-h", top.offsetHeight + "px");
+      }
+      measureTop();
+      window.addEventListener("resize", measureTop);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureTop);
+
+      var links = document.querySelectorAll(".sb-nav a");
+      var sections = [];
+      links.forEach(function (a) {
+        var el = document.querySelector(a.getAttribute("href"));
+        if (el) sections.push({ link: a, el: el });
+      });
+      function update() {
+        var line = window.innerHeight * 0.45;
+        var current = sections[0];
+        sections.forEach(function (s) {
+          if (s.el.getBoundingClientRect().top <= line) current = s;
+        });
+        sections.forEach(function (s) {
+          if (s === current) s.link.setAttribute("aria-current", "true");
+          else s.link.removeAttribute("aria-current");
+        });
+      }
+      update();
+      window.addEventListener("scroll", update, { passive: true });
+      window.addEventListener("resize", update);
+
+      var video = document.querySelector(".sb-row-video");
+      if (video && "IntersectionObserver" in window) {
+        new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              var p = video.play();
+              if (p && p.catch) p.catch(function () {});
+            } else {
+              video.pause();
+            }
+          });
+        }, { threshold: 0.25 }).observe(video);
+      }
+    })();
+  </script>
+</body>
+</html>

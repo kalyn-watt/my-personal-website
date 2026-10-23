@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalyn Watt — UX Designer</title>
+  <meta name="description" content="Kalyn Watt is an interdisciplinary designer crafting digital experiences rooted in data, empathy, and a little bit of whimsy.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=177">
+</head>
+<body class="page-landing">
+
+  <header class="landing-header">
+    <a class="landing-logo" href="index.html">
+      <span class="landing-logo-dot"></span>
+      <span class="landing-logo-text">kalyn watt / design</span>
+    </a>
+  </header>
+
+  <main class="landing-main">
+    <div class="landing-top">
+      <div class="landing-tabs">
+        <a class="landing-tab" href="index.html" aria-current="page">
+          <span>WORK</span>
+          <span class="landing-tab-line landing-tab-line--active"><img src="assets/tab-line-active.svg" alt=""></span>
+        </a>
+        <a class="landing-tab" href="playground.html">
+          <span>PLAY</span>
+          <span class="landing-tab-line"><img src="assets/tab-line-inactive.svg" alt=""></span>
+        </a>
+        <a class="landing-tab" href="about.html">
+          <span>ABOUT</span>
+          <span class="landing-tab-line"><img src="assets/tab-line-inactive.svg" alt=""></span>
+        </a>
+      </div>
+
+      <p class="landing-bio">Interdisciplinary designer with a background in information and psychology. Crafting digital experiences rooted in innovation, data, empathy, and a little bit of whimsy.</p>
+    </div>
+
+    <ul class="landing-cards">
+      <li class="landing-card" data-project="chase">
+        <a class="landing-card-link" href="case-study-chase-travel.html">
+          <div class="landing-thumb" data-thumb="chase">
+            <div class="chase-fit">
+              <div class="chase-anim">
+                <img class="chase-mark" src="assets/chase-thumbnail/mark-large.svg" alt="">
+                <div class="chase-word chase-word--chase"><img src="assets/chase-thumbnail/chase-wordmark.png" alt=""></div>
+                <div class="chase-word chase-word--travel"><img src="assets/chase-thumbnail/travel-wordmark.png" alt=""></div>
+              </div>
+            </div>
+          </div>
+          <div class="landing-card-caption">
+            <div class="landing-card-meta">
+              <p class="landing-card-company">JPMORGANCHASE | 2026</p>
+              <p class="landing-card-title">LLM-Powered Search Experience</p>
+            </div>
+            <div class="landing-detail">
+              <div class="landing-detail-tags">
+                <span class="landing-detail-tag">FINTECH</span>
+                <span class="landing-detail-tag">AI DESIGN</span>
+              </div>
+              <p>Boosting conversion through natural-language search</p>
+            </div>
+          </div>
+        </a>
+      </li>
+      <li class="landing-card" data-project="cargill">
+        <a class="landing-card-link" href="case-study-reskued.html">
+          <div class="landing-thumb" data-thumb="cargill">
+            <div class="reskued-logo">
+              <span class="reskued-logo-part reskued-logo-part--re"><img src="assets/reskued/logo-re.svg" alt=""></span>
+              <span class="reskued-logo-part reskued-logo-part--skued"><img src="assets/reskued/logo-skued.svg" alt=""></span>
+              <span class="reskued-logo-part reskued-logo-part--dot"><img src="assets/reskued/logo-dot.svg" alt=""></span>
+            </div>
+            <div class="rk-hover" aria-hidden="true">
+              <div class="rk-hover-stage">
+                <span class="rk-hover-card"><img src="assets/reskued/dashboard-full.png" alt=""></span>
+                <span class="rk-hover-phone"><img src="assets/reskued/newsletter.png" alt=""></span>
+              </div>
+            </div>
+          </div>
+          <div class="landing-card-caption">
+            <div class="landing-card-meta">
+              <p class="landing-card-company">CARGILL | 2022</p>
+              <p class="landing-card-title">Reskued</p>
+            </div>
+            <div class="landing-detail landing-detail--lg">
+              <div class="landing-detail-tags">
+                <span class="landing-detail-tag">CUSTOMER ACQUISITION</span>
+                <span class="landing-detail-tag">UX DESIGN</span>
+              </div>
+              <p>Empowering businesses to reduce manufacturer level food waste</p>
+            </div>
+          </div>
+        </a>
+      </li>
+      <li class="landing-card" data-project="konrad">
+        <a class="landing-card-link" href="case-study-journeir.html">
+          <div class="landing-thumb" data-thumb="konrad">
+            <div class="jr-stage" aria-hidden="true">
+              <img class="jr-brand" src="assets/journeir/thumbnail.jpg" alt="">
+              <span class="jr-col jr-col--1"><img src="assets/journeir/landing.jpg" alt=""></span>
+              <span class="jr-col jr-col--2"><img src="assets/journeir/landing.jpg" alt=""></span>
+            </div>
+          </div>
+          <div class="landing-card-caption">
+            <div class="landing-card-meta">
+              <p class="landing-card-company">KONRAD GROUP | 2024</p>
+              <p class="landing-card-title">Journeir</p>
+            </div>
+            <div class="landing-detail landing-detail--lg">
+              <div class="landing-detail-tags">
+                <span class="landing-detail-tag">VISUAL IDENTITY</span>
+                <span class="landing-detail-tag">CUSTOMER ACQUISITION</span>
+                <span class="landing-detail-tag">UX DESIGN</span>
+              </div>
+              <p>Helping adventurous travelers discover unique itineraries</p>
+            </div>
+          </div>
+        </a>
+      </li>
+    </ul>
+  </main>
+
+  <script>
+    (function () {
+      var thumb = document.querySelector('.landing-thumb[data-thumb="chase"]');
+      if (!thumb) return;
+
+      function fit() {
+        var w = thumb.clientWidth, h = thumb.clientHeight;
+        if (!w || !h) return;
+        thumb.style.setProperty("--chase-scale", Math.min(w / 672, h / 376));
+      }
+      fit();
+      if (window.ResizeObserver) new ResizeObserver(fit).observe(thumb);
+
+      var stopTimer;
+      function start() {
+        clearTimeout(stopTimer);
+        thumb.classList.remove("is-playing");
+        void thumb.offsetWidth;
+        thumb.classList.add("is-playing");
+      }
+      function stop() {
+        clearTimeout(stopTimer);
+        stopTimer = setTimeout(function () { thumb.classList.remove("is-playing"); }, 400);
+      }
+      thumb.addEventListener("mouseenter", start);
+      thumb.addEventListener("mouseleave", stop);
+    })();
+  </script>
+</body>
+</html>

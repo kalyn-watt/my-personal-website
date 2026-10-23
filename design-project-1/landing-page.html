@@ -1,0 +1,1030 @@
+<title>Loam — a journal that listens back</title>
+<style>
+  @media (prefers-reduced-motion: no-preference) {
+    :root { --motion-ok: 1; }
+  }
+
+  :root {
+    --paper: #F1EFE7;
+    --paper-raised: #FBFAF5;
+    --paper-dim: #E6E2D5;
+    --ink: #1D2521;
+    --ink-soft: #55594F;
+    --ink-faint: #8B8E82;
+    --line: rgba(29, 37, 33, 0.14);
+    --line-soft: rgba(29, 37, 33, 0.08);
+
+    --accent: #3B6E64;
+    --accent-deep: #24463D;
+    --accent-tint: rgba(59, 110, 100, 0.12);
+
+    --work: #3B6E64;
+    --family: #5B6B7A;
+    --money: #B9903E;
+    --health: #A85C3E;
+    --creativity: #7A8450;
+    --rest: #6B5B72;
+
+    --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+    --font-body: Optima, 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: 'SF Mono', Menlo, Consolas, ui-monospace, 'Courier New', monospace;
+
+    --radius: 3px;
+    --shadow-card: 0 1px 2px rgba(29, 37, 33, 0.05), 0 8px 24px -12px rgba(29, 37, 33, 0.18);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #14181A;
+      --paper-raised: #1B2123;
+      --paper-dim: #1F2624;
+      --ink: #ECE9E0;
+      --ink-soft: #AEB3A8;
+      --ink-faint: #6E7268;
+      --line: rgba(236, 233, 224, 0.14);
+      --line-soft: rgba(236, 233, 224, 0.08);
+
+      --accent: #74AB98;
+      --accent-deep: #9BC7B4;
+      --accent-tint: rgba(116, 171, 152, 0.14);
+
+      --work: #74AB98;
+      --family: #93A4B4;
+      --money: #D8B368;
+      --health: #C97F5D;
+      --creativity: #9CAA72;
+      --rest: #A088A6;
+
+      --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.2), 0 12px 28px -14px rgba(0, 0, 0, 0.55);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #14181A;
+    --paper-raised: #1B2123;
+    --paper-dim: #1F2624;
+    --ink: #ECE9E0;
+    --ink-soft: #AEB3A8;
+    --ink-faint: #6E7268;
+    --line: rgba(236, 233, 224, 0.14);
+    --line-soft: rgba(236, 233, 224, 0.08);
+    --accent: #74AB98;
+    --accent-deep: #9BC7B4;
+    --accent-tint: rgba(116, 171, 152, 0.14);
+    --work: #74AB98;
+    --family: #93A4B4;
+    --money: #D8B368;
+    --health: #C97F5D;
+    --creativity: #9CAA72;
+    --rest: #A088A6;
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.2), 0 12px 28px -14px rgba(0, 0, 0, 0.55);
+  }
+
+  :root[data-theme="light"] {
+    --paper: #F1EFE7;
+    --paper-raised: #FBFAF5;
+    --paper-dim: #E6E2D5;
+    --ink: #1D2521;
+    --ink-soft: #55594F;
+    --ink-faint: #8B8E82;
+    --line: rgba(29, 37, 33, 0.14);
+    --line-soft: rgba(29, 37, 33, 0.08);
+    --accent: #3B6E64;
+    --accent-deep: #24463D;
+    --accent-tint: rgba(59, 110, 100, 0.12);
+    --work: #3B6E64;
+    --family: #5B6B7A;
+    --money: #B9903E;
+    --health: #A85C3E;
+    --creativity: #7A8450;
+    --rest: #6B5B72;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  body {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: var(--accent-tint); color: var(--ink); }
+
+  a { color: inherit; }
+  button { font-family: inherit; }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 4vw, 3rem);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  p { margin: 0; }
+
+  .h-hero {
+    font-size: clamp(2.5rem, 5.1vw, 4.1rem);
+    line-height: 1.04;
+    letter-spacing: -0.01em;
+  }
+
+  .h-section {
+    font-size: clamp(1.9rem, 3.2vw, 2.5rem);
+    line-height: 1.12;
+  }
+
+  .h-card {
+    font-size: 1.32rem;
+    line-height: 1.3;
+  }
+
+  .lede {
+    font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+    color: var(--ink-soft);
+    max-width: 40ch;
+  }
+
+  .body-copy {
+    color: var(--ink-soft);
+    max-width: 62ch;
+  }
+
+  /* ---------- nav ---------- */
+
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .site-nav .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 1.1rem;
+  }
+
+  .wordmark {
+    font-family: var(--font-display);
+    font-size: 1.28rem;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+
+  .wordmark::before {
+    content: "";
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 1px;
+    background: var(--accent);
+    display: inline-block;
+    transform: translateY(-0.15rem);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: clamp(1.2rem, 2.5vw, 2.2rem);
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+  }
+
+  .nav-links a:hover { color: var(--ink); }
+
+  .nav-links .nav-links-secondary { display: flex; gap: inherit; }
+
+  @media (max-width: 640px) {
+    .nav-links-secondary { display: none; }
+  }
+
+  /* ---------- buttons ---------- */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.5rem;
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease, background-color 0.15s ease;
+  }
+
+  .btn:active { transform: translateY(1px); }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .btn-primary:hover { opacity: 0.86; }
+
+  .btn-ghost {
+    background: transparent;
+    border-color: var(--line);
+    color: var(--ink);
+  }
+
+  .btn-ghost:hover { border-color: var(--ink-faint); }
+
+  .btn-small {
+    padding: 0.55rem 1.1rem;
+    font-size: 0.85rem;
+  }
+
+  /* ---------- hero ---------- */
+
+  .hero {
+    padding-block: clamp(3.5rem, 8vw, 6rem) clamp(3rem, 6vw, 5rem);
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .hero .wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: clamp(2.5rem, 5vw, 4.5rem);
+    align-items: center;
+  }
+
+  @media (max-width: 900px) {
+    .hero .wrap { grid-template-columns: 1fr; }
+  }
+
+  .hero-copy { display: flex; flex-direction: column; gap: 1.4rem; align-items: flex-start; }
+
+  .hero-cta-row { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; margin-top: 0.4rem; }
+
+  .hero-note {
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- composer demo ---------- */
+
+  .composer {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+
+  .composer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1.2rem;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .composer-date {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+  }
+
+  .mode-toggle {
+    display: inline-flex;
+    background: var(--paper-dim);
+    border-radius: 999px;
+    padding: 3px;
+    gap: 2px;
+  }
+
+  .mode-btn {
+    border: none;
+    background: transparent;
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    padding: 0.34rem 0.85rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .mode-btn.is-active {
+    background: var(--paper-raised);
+    color: var(--ink);
+    box-shadow: 0 1px 1px rgba(0,0,0,0.06);
+  }
+
+  .composer-body {
+    padding: 1.6rem 1.2rem 1.1rem;
+    min-height: 6.5rem;
+  }
+
+  .composer-text {
+    font-family: var(--font-display);
+    font-size: 1.16rem;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.05em;
+    background: var(--accent);
+    vertical-align: text-bottom;
+    margin-left: 1px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cursor { animation: blink 1s step-end infinite; }
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .composer-waves {
+    display: none;
+    align-items: flex-end;
+    gap: 4px;
+    height: 3.4rem;
+    padding-top: 0.6rem;
+  }
+
+  .composer.mode-speak .composer-text { display: none; }
+  .composer.mode-speak .composer-waves { display: flex; }
+
+  .composer-waves span {
+    width: 4px;
+    border-radius: 2px;
+    background: var(--accent);
+    opacity: 0.75;
+    height: 30%;
+    transform-origin: bottom;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .composer.mode-speak .composer-waves span {
+      animation: wavebar 1.15s ease-in-out infinite;
+      animation-delay: calc(var(--i) * 0.055s);
+    }
+  }
+
+  @keyframes wavebar {
+    0%, 100% { height: 22%; }
+    50% { height: var(--peak, 85%); }
+  }
+
+  .composer-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    padding: 0.9rem 1.2rem 1.1rem;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  .foot-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    color: var(--ink-faint);
+  }
+
+  .chip-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+  .chip {
+    font-size: 0.78rem;
+    padding: 0.32rem 0.7rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--c) 16%, var(--paper-raised));
+    color: color-mix(in srgb, var(--c) 70%, var(--ink));
+    border: 1px solid color-mix(in srgb, var(--c) 30%, transparent);
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .chip-row.is-revealed .chip { opacity: 1; transform: translateY(0); }
+  .chip-row.is-revealed .chip:nth-child(2) { transition-delay: 0.12s; }
+  .chip-row.is-revealed .chip:nth-child(3) { transition-delay: 0.24s; }
+
+  /* ---------- reveal on scroll ---------- */
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+  }
+
+  .reveal.in-view { opacity: 1; transform: translateY(0); }
+
+  /* ---------- section shell ---------- */
+
+  section { padding-block: clamp(3.5rem, 7vw, 5.5rem); }
+  section + section { border-top: 1px solid var(--line-soft); }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: clamp(2.2rem, 4vw, 3.2rem);
+  }
+
+  .section-head-copy { display: flex; flex-direction: column; gap: 0.9rem; max-width: 46ch; }
+
+  /* ---------- core sample ---------- */
+
+  .core-layout {
+    display: grid;
+    grid-template-columns: minmax(140px, 200px) 1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  @media (max-width: 760px) {
+    .core-layout { grid-template-columns: 1fr; justify-items: center; }
+  }
+
+  .core-sample {
+    width: 100%;
+    max-width: 200px;
+    height: clamp(280px, 40vw, 420px);
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-card);
+  }
+
+  .core-band {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .core-band { transition: height 1.1s cubic-bezier(0.22, 1, 0.36, 1); }
+  }
+
+  .core-sample.in-view .core-band { height: var(--h); }
+
+  .core-band-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.03em;
+    color: var(--paper);
+    opacity: 0.92;
+    white-space: nowrap;
+  }
+
+  .legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .legend-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    padding-block: 0.35rem;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .legend-row:last-child { border-bottom: none; }
+
+  .legend-dot {
+    width: 0.62rem;
+    height: 0.62rem;
+    border-radius: 1px;
+    background: var(--c);
+    flex-shrink: 0;
+    transform: translateY(0.05rem);
+  }
+
+  .legend-name { font-size: 1.02rem; }
+
+  .legend-count {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    margin-left: auto;
+  }
+
+  /* ---------- how it works ---------- */
+
+  .stages {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(1.8rem, 4vw, 2.5rem);
+  }
+
+  @media (max-width: 760px) {
+    .stages { grid-template-columns: 1fr; }
+  }
+
+  .stage { display: flex; flex-direction: column; gap: 0.9rem; }
+
+  .stage-mark {
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--paper-dim);
+    border: 1px solid var(--line);
+  }
+
+  .stage-mark-dots { display: flex; gap: 3px; }
+  .stage-mark-dots span { width: 4px; height: 4px; border-radius: 50%; background: var(--ink-faint); }
+  .stage-mark-dots span:nth-child(2) { background: var(--accent); }
+
+  .stage-mark-bars { display: flex; gap: 2px; align-items: flex-end; height: 1.1rem; }
+  .stage-mark-bars span { width: 3px; background: var(--accent); border-radius: 1px; }
+
+  .stage-mark-tag { width: 1.15rem; height: 0.85rem; border: 1.5px solid var(--accent); border-radius: 2px; position: relative; }
+  .stage-mark-tag::after { content: ""; position: absolute; right: -3px; top: 50%; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; transform: translateY(-50%); }
+
+  .stage-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+
+  .stage p { color: var(--ink-soft); }
+
+  /* ---------- theme cards ---------- */
+
+  .theme-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(1.2rem, 2.5vw, 1.6rem);
+  }
+
+  @media (max-width: 760px) {
+    .theme-grid { grid-template-columns: 1fr; }
+  }
+
+  .theme-card {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.5rem 1.6rem 1.7rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: var(--shadow-card);
+    border-top: 3px solid var(--c);
+  }
+
+  .excerpt-list { display: flex; flex-direction: column; gap: 0.55rem; }
+
+  .excerpt {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    display: flex;
+    gap: 0.55rem;
+  }
+
+  .excerpt-date {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+    flex-shrink: 0;
+    padding-top: 0.15rem;
+  }
+
+  .insight {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.02rem;
+    line-height: 1.5;
+    color: var(--ink);
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  /* ---------- privacy band ---------- */
+
+  .privacy-band { background: var(--paper-dim); }
+
+  .privacy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  @media (max-width: 760px) {
+    .privacy-grid { grid-template-columns: 1fr; }
+  }
+
+  .privacy-item { display: flex; gap: 0.9rem; }
+
+  .privacy-mark {
+    flex-shrink: 0;
+    width: 1.4rem;
+    height: 1.4rem;
+    margin-top: 0.15rem;
+    border: 1.5px solid var(--ink-faint);
+    border-radius: 50%;
+    position: relative;
+  }
+
+  .privacy-mark::after {
+    content: "";
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 4px; height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .privacy-item h3 { font-family: var(--font-body); font-size: 1rem; margin-bottom: 0.3rem; }
+  .privacy-item p { font-size: 0.92rem; color: var(--ink-soft); }
+
+  /* ---------- final cta ---------- */
+
+  .final-cta {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.6rem;
+  }
+
+  .final-cta h2 { max-width: 22ch; }
+
+  /* ---------- footer ---------- */
+
+  footer { border-top: 1px solid var(--line-soft); padding-block: 2.2rem; }
+
+  footer .wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { font-size: 0.85rem; color: var(--ink-faint); text-decoration: none; }
+  .footer-links a:hover { color: var(--ink-soft); }
+
+  .footer-fine { font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-faint); }
+</style>
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="wordmark" href="#top">Loam</a>
+    <div class="nav-links">
+      <div class="nav-links-secondary">
+        <a href="#how">How it works</a>
+        <a href="#themes">Themes</a>
+        <a href="#privacy">Privacy</a>
+      </div>
+      <a class="btn btn-ghost btn-small" href="#start">Start journaling</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-copy">
+        <span class="eyebrow">Private · voice or text</span>
+        <h1 class="h-hero">Say the messy version.<br>Loam finds the pattern.</h1>
+        <p class="lede">Talk or type into Loam the way you actually think — mid-thought, out of order, three times about the same thing. Across weeks it surfaces what you keep circling back to, in your own words.</p>
+        <div class="hero-cta-row">
+          <a class="btn btn-primary" href="#start">Start journaling — free</a>
+          <a class="btn btn-ghost" href="#how">See how it works</a>
+        </div>
+        <span class="hero-note">No credit card. Entries stay yours.</span>
+      </div>
+
+      <div class="composer mode-write" id="composer">
+        <div class="composer-head">
+          <span class="composer-date">TODAY · 11:47 PM</span>
+          <div class="mode-toggle" role="group" aria-label="Input mode">
+            <button type="button" class="mode-btn is-active" data-mode="write">Write</button>
+            <button type="button" class="mode-btn" data-mode="speak">Speak</button>
+          </div>
+        </div>
+        <div class="composer-body">
+          <p class="composer-text" id="composerText"><span class="cursor"></span></p>
+          <div class="composer-waves" id="composerWaves" aria-hidden="true"></div>
+        </div>
+        <div class="composer-foot">
+          <span class="foot-label">Loam is listening</span>
+          <div class="chip-row" id="chipRow">
+            <span class="chip" style="--c: var(--family)">Family</span>
+            <span class="chip" style="--c: var(--work)">Overwhelm</span>
+            <span class="chip" style="--c: var(--rest)">Sleep</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="shape">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-head-copy reveal">
+          <span class="eyebrow">What it becomes</span>
+          <h2 class="h-section">What a season of entries looks like</h2>
+        </div>
+        <p class="body-copy reveal">Loam doesn't sort your journal into folders. It watches for what keeps resurfacing across weeks of voice memos and typed entries — then shows you the shape of it, like a core sample of the last few months.</p>
+      </div>
+
+      <div class="core-layout">
+        <div class="core-sample reveal" id="coreSample">
+          <div class="core-band" style="--h: 30%; background: var(--work);"><span class="core-band-label">Work · 21</span></div>
+          <div class="core-band" style="--h: 20%; background: var(--family);"><span class="core-band-label">Family · 14</span></div>
+          <div class="core-band" style="--h: 17%; background: var(--money);"><span class="core-band-label">Money · 12</span></div>
+          <div class="core-band" style="--h: 14%; background: var(--health);"></div>
+          <div class="core-band" style="--h: 10%; background: var(--creativity);"></div>
+          <div class="core-band" style="--h: 9%; background: var(--rest);"></div>
+        </div>
+
+        <div class="legend reveal">
+          <div class="legend-row"><span class="legend-dot" style="--c: var(--work);"></span><span class="legend-name">Work</span><span class="legend-count">21 entries</span></div>
+          <div class="legend-row"><span class="legend-dot" style="--c: var(--family);"></span><span class="legend-name">Family</span><span class="legend-count">14 entries</span></div>
+          <div class="legend-row"><span class="legend-dot" style="--c: var(--money);"></span><span class="legend-name">Money</span><span class="legend-count">12 entries</span></div>
+          <div class="legend-row"><span class="legend-dot" style="--c: var(--health);"></span><span class="legend-name">Health</span><span class="legend-count">10 entries</span></div>
+          <div class="legend-row"><span class="legend-dot" style="--c: var(--creativity);"></span><span class="legend-name">Creativity</span><span class="legend-count">7 entries</span></div>
+          <div class="legend-row"><span class="legend-dot" style="--c: var(--rest);"></span><span class="legend-name">Rest</span><span class="legend-count">6 entries</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-head-copy reveal">
+          <span class="eyebrow">How it works</span>
+          <h2 class="h-section">Three things happen, in order</h2>
+        </div>
+      </div>
+
+      <div class="stages">
+        <div class="stage reveal">
+          <div class="stage-mark">
+            <div class="stage-mark-bars" aria-hidden="true">
+              <span style="height: 40%;"></span><span style="height: 90%;"></span><span style="height: 60%;"></span><span style="height: 100%;"></span><span style="height: 50%;"></span>
+            </div>
+          </div>
+          <span class="stage-label">DEPOSIT</span>
+          <h3 class="h-card">Speak or write, unedited</h3>
+          <p>Open Loam when you have thirty seconds or thirty minutes. Talk it out loud on a walk, or type it at your desk. No prompts, no formatting — just what's actually on your mind.</p>
+        </div>
+
+        <div class="stage reveal">
+          <div class="stage-mark">
+            <div class="stage-mark-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+          </div>
+          <span class="stage-label">SETTLE</span>
+          <h3 class="h-card">Loam reads across everything</h3>
+          <p>Every entry stays private and unsorted on your end. Underneath, Loam is comparing today's entry to last month's, last season's — watching for what returns.</p>
+        </div>
+
+        <div class="stage reveal">
+          <div class="stage-mark">
+            <div class="stage-mark-tag" aria-hidden="true"></div>
+          </div>
+          <span class="stage-label">SURFACE</span>
+          <h3 class="h-card">Themes rise, with the evidence</h3>
+          <p>Once a pattern is real — not just one bad Tuesday — Loam names it and shows you the entries that built it, in your own words, so you can trust the read.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="themes">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-head-copy reveal">
+          <span class="eyebrow">Real themes, real entries</span>
+          <h2 class="h-section">The threads Loam actually found</h2>
+        </div>
+        <p class="body-copy reveal">Composites drawn from how people describe using Loam — the point isn't the topic, it's noticing a topic at all.</p>
+      </div>
+
+      <div class="theme-grid">
+        <div class="theme-card reveal" style="--c: var(--work);">
+          <h3 class="h-card">The job you keep almost-quitting</h3>
+          <div class="excerpt-list">
+            <p class="excerpt"><span class="excerpt-date">MAR 3</span><span>Told myself I'd start applying this weekend.</span></p>
+            <p class="excerpt"><span class="excerpt-date">APR 19</span><span>Another meeting that could've been an email. I'm so tired.</span></p>
+            <p class="excerpt"><span class="excerpt-date">JUN 2</span><span>Maybe it's not the job. Maybe it's just June.</span></p>
+          </div>
+          <p class="insight">"Fourteen entries since January circle the same question. You're not asking whether to leave — you're asking whether you're allowed to."</p>
+        </div>
+
+        <div class="theme-card reveal" style="--c: var(--family);">
+          <h3 class="h-card">Missing your sister</h3>
+          <div class="excerpt-list">
+            <p class="excerpt"><span class="excerpt-date">FEB 11</span><span>Called Mara. Talked for two hours and still had more to say.</span></p>
+            <p class="excerpt"><span class="excerpt-date">MAY 6</span><span>Saw her coat in a shop window. Texted a photo, no caption.</span></p>
+            <p class="excerpt"><span class="excerpt-date">JUL 2</span><span>Wish she lived closer. Wish I'd said that out loud.</span></p>
+          </div>
+          <p class="insight">"Nine entries, four months apart in miles but never in mind. The distance shows up more in what you don't say than what you do."</p>
+        </div>
+
+        <div class="theme-card reveal" style="--c: var(--money);">
+          <h3 class="h-card">Money, mostly at night</h3>
+          <div class="excerpt-list">
+            <p class="excerpt"><span class="excerpt-date">JAN 22</span><span>Did the math again at 1am. Still doesn't add up.</span></p>
+            <p class="excerpt"><span class="excerpt-date">APR 8</span><span>Good day. Didn't think about the account balance once.</span></p>
+            <p class="excerpt"><span class="excerpt-date">JUN 30</span><span>Same spiral, different hour.</span></p>
+          </div>
+          <p class="insight">"The worry clusters after 11pm and fades by noon. It's not the number — it's the quiet."</p>
+        </div>
+
+        <div class="theme-card reveal" style="--c: var(--health);">
+          <h3 class="h-card">The 6am runs that actually work</h3>
+          <div class="excerpt-list">
+            <p class="excerpt"><span class="excerpt-date">MAR 14</span><span>Ran before the sun. Whole day felt easier.</span></p>
+            <p class="excerpt"><span class="excerpt-date">MAY 30</span><span>Skipped it. Could tell by 3pm.</span></p>
+            <p class="excerpt"><span class="excerpt-date">JUL 10</span><span>Twelve runs this month. Best stretch since college.</span></p>
+          </div>
+          <p class="insight">"Every entry mentioning the run also mentions feeling steadier. Loam noticed before you did."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="privacy" class="privacy-band">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-head-copy reveal">
+          <span class="eyebrow">Before you write anything</span>
+          <h2 class="h-section">A journal should stay one</h2>
+        </div>
+      </div>
+
+      <div class="privacy-grid">
+        <div class="privacy-item reveal">
+          <div class="privacy-mark" aria-hidden="true"></div>
+          <div>
+            <h3>Private by default</h3>
+            <p>Entries are encrypted and never used to train outside models.</p>
+          </div>
+        </div>
+        <div class="privacy-item reveal">
+          <div class="privacy-mark" aria-hidden="true"></div>
+          <div>
+            <h3>Yours to take</h3>
+            <p>Export every entry, or your whole theme history, as plain text anytime.</p>
+          </div>
+        </div>
+        <div class="privacy-item reveal">
+          <div class="privacy-mark" aria-hidden="true"></div>
+          <div>
+            <h3>Delete means delete</h3>
+            <p>Remove one entry or your entire account in a single step — nothing lingers.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="start">
+    <div class="wrap final-cta">
+      <span class="eyebrow reveal">Start today</span>
+      <h2 class="h-section reveal">Your next entry might be the ninth one about the same thing.</h2>
+      <a class="btn btn-primary reveal" href="#top">Start journaling — free</a>
+      <span class="hero-note reveal">Takes under a minute. No credit card.</span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="wordmark" style="font-size: 1rem;">Loam</span>
+    <div class="footer-links">
+      <a href="#privacy">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Contact</a>
+    </div>
+    <span class="footer-fine">© 2026 Loam · made for the thoughts you have twice</span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // composer waveform bars
+    var waves = document.getElementById('composerWaves');
+    var peaks = [55, 80, 40, 95, 65, 100, 45, 70, 85, 50, 90, 60, 75, 40, 95, 55, 80, 65, 100, 45];
+    peaks.forEach(function (p, i) {
+      var bar = document.createElement('span');
+      bar.style.setProperty('--i', i);
+      bar.style.setProperty('--peak', p + '%');
+      waves.appendChild(bar);
+    });
+
+    // mode toggle
+    var composer = document.getElementById('composer');
+    var modeBtns = composer.querySelectorAll('.mode-btn');
+    modeBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        modeBtns.forEach(function (b) { b.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+        composer.classList.toggle('mode-speak', btn.dataset.mode === 'speak');
+      });
+    });
+
+    // typewriter + chip reveal
+    var textEl = document.getElementById('composerText');
+    var cursor = textEl.querySelector('.cursor');
+    var chipRow = document.getElementById('chipRow');
+    var sample = "Didn't sleep well. Keep thinking about the call with mom, and also somehow the dishwasher. everything feels loud today.";
+
+    if (reduceMotion) {
+      textEl.insertBefore(document.createTextNode(sample), cursor);
+      chipRow.classList.add('is-revealed');
+    } else {
+      var i = 0;
+      var typing = setInterval(function () {
+        textEl.insertBefore(document.createTextNode(sample[i]), cursor);
+        i++;
+        if (i >= sample.length) {
+          clearInterval(typing);
+          setTimeout(function () { chipRow.classList.add('is-revealed'); }, 400);
+        }
+      }, 32);
+    }
+
+    // scroll reveal
+    var revealEls = document.querySelectorAll('.reveal');
+    var coreSample = document.getElementById('coreSample');
+
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      revealEls.forEach(function (el) { el.classList.add('in-view'); });
+      coreSample.classList.add('in-view');
+    } else {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.2 });
+
+      revealEls.forEach(function (el) { io.observe(el); });
+      io.observe(coreSample);
+    }
+  })();
+</script>

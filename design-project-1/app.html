@@ -1,0 +1,690 @@
+<title>Loam</title>
+<style>
+  :root {
+    --paper: #F1EFE7;
+    --paper-raised: #FBFAF5;
+    --paper-dim: #E6E2D5;
+    --ink: #1D2521;
+    --ink-soft: #55594F;
+    --ink-faint: #8B8E82;
+    --line: rgba(29, 37, 33, 0.14);
+    --line-soft: rgba(29, 37, 33, 0.08);
+    --accent: #3B6E64;
+    --accent-tint: rgba(59, 110, 100, 0.12);
+    --danger: #A85C3E;
+    --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+    --font-body: Optima, 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: 'SF Mono', Menlo, Consolas, ui-monospace, 'Courier New', monospace;
+    --radius: 4px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #14181A; --paper-raised: #1B2123; --paper-dim: #1F2624;
+      --ink: #ECE9E0; --ink-soft: #AEB3A8; --ink-faint: #6E7268;
+      --line: rgba(236,233,224,0.14); --line-soft: rgba(236,233,224,0.08);
+      --accent: #74AB98; --accent-tint: rgba(116,171,152,0.16); --danger: #C97F5D;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #14181A; --paper-raised: #1B2123; --paper-dim: #1F2624;
+    --ink: #ECE9E0; --ink-soft: #AEB3A8; --ink-faint: #6E7268;
+    --line: rgba(236,233,224,0.14); --line-soft: rgba(236,233,224,0.08);
+    --accent: #74AB98; --accent-tint: rgba(116,171,152,0.16); --danger: #C97F5D;
+  }
+  :root[data-theme="light"] {
+    --paper: #F1EFE7; --paper-raised: #FBFAF5; --paper-dim: #E6E2D5;
+    --ink: #1D2521; --ink-soft: #55594F; --ink-faint: #8B8E82;
+    --line: rgba(29,37,33,0.14); --line-soft: rgba(29,37,33,0.08);
+    --accent: #3B6E64; --accent-tint: rgba(59,110,100,0.12); --danger: #A85C3E;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { background: var(--paper); color: var(--ink); height: 100%; }
+  body {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    overflow: hidden;
+  }
+  a { color: inherit; }
+  button, textarea { font-family: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .app-shell { display: flex; height: 100vh; }
+
+  /* ---------------- sidebar ---------------- */
+  .sidebar {
+    width: 300px; flex-shrink: 0; background: var(--paper-dim);
+    border-right: 1px solid var(--line);
+    display: flex; flex-direction: column; min-height: 0;
+  }
+  .sidebar-head { padding: 1.4rem 1.3rem 0.9rem; }
+  .wordmark { font-family: var(--font-display); font-size: 1.25rem; display: flex; align-items: baseline; gap: 0.4rem; }
+  .wordmark::before { content: ""; width: 0.5rem; height: 0.5rem; background: var(--accent); display: inline-block; transform: translateY(-0.13rem); border-radius: 1px; }
+  .sidebar-label { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-faint); margin-top: 0.9rem; }
+
+  .sidebar-list { flex: 1; overflow-y: auto; padding: 0.4rem 0.9rem 1.2rem; }
+  .sidebar-entry {
+    padding: 0.7rem 0.6rem; border-radius: var(--radius); margin-bottom: 0.15rem;
+  }
+  .sidebar-entry-date { font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-faint); display: flex; justify-content: space-between; gap: 0.5rem; }
+  .sidebar-entry-text { font-size: 0.87rem; color: var(--ink-soft); margin-top: 0.3rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .sidebar-entry-del { background: none; border: none; color: var(--ink-faint); cursor: pointer; font-size: 0.68rem; flex-shrink: 0; }
+  .sidebar-entry-del:hover { color: var(--danger); }
+  .sidebar-empty { color: var(--ink-faint); font-size: 0.86rem; padding: 0.6rem; }
+
+  .entry-enter { opacity: 0; transform: translateY(-6px); }
+  @media (prefers-reduced-motion: no-preference) {
+    .entry-enter { transition: opacity 0.4s ease, transform 0.4s cubic-bezier(.22,1,.36,1); }
+  }
+
+  /* ---------------- main column ---------------- */
+  .main-col { flex: 1; min-width: 0; display: flex; flex-direction: column; min-height: 0; }
+
+  .main-head { padding: 1.4rem 1.6rem 1rem; border-bottom: 1px solid var(--line-soft); flex-shrink: 0; }
+  .main-head-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .main-title { font-family: var(--font-display); font-size: 1.4rem; }
+
+  .range-tabs { display: inline-flex; background: var(--paper-dim); border-radius: 999px; padding: 3px; gap: 2px; }
+  .range-btn { border: none; background: transparent; color: var(--ink-soft); font-size: 0.82rem; padding: 0.4rem 0.85rem; border-radius: 999px; cursor: pointer; }
+  .range-btn.is-active { background: var(--paper-raised); color: var(--ink); box-shadow: 0 1px 1px rgba(0,0,0,0.06); }
+
+  .main-summary { font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-faint); margin-top: 0.7rem; }
+
+  .main-scroll { flex: 1; overflow-y: auto; padding: 1.4rem 1.6rem; position: relative; }
+  .themes-panel { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; align-content: start; }
+  @media (prefers-reduced-motion: no-preference) {
+    .themes-panel.is-switching { transition: opacity 0.18s ease; opacity: 0; }
+  }
+
+  .theme-card {
+    background: var(--paper-raised); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 1.05rem 1.2rem 1.2rem; border-left: 3px solid var(--c);
+  }
+  .theme-card.is-pulsing { animation: cardPulse 0.65s ease; }
+  @keyframes cardPulse {
+    0% { box-shadow: 0 0 0 0 var(--c-tint); }
+    35% { box-shadow: 0 0 0 7px var(--c-tint); }
+    100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+  }
+  .theme-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+  .theme-name { font-family: var(--font-display); font-size: 1.15rem; text-transform: capitalize; }
+  .theme-count { font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-faint); white-space: nowrap; }
+  .theme-count.bump { color: var(--c); }
+  .theme-bar { height: 4px; background: var(--paper-dim); border-radius: 2px; margin: 0.6rem 0 0.85rem; overflow: hidden; }
+  .theme-bar-fill { height: 100%; background: var(--c); }
+  @media (prefers-reduced-motion: no-preference) {
+    .theme-bar-fill { transition: width 0.5s cubic-bezier(.22,1,.36,1); }
+  }
+  .theme-excerpts { display: flex; flex-direction: column; gap: 0.4rem; }
+  .theme-excerpt { font-size: 0.85rem; color: var(--ink-soft); display: flex; gap: 0.5rem; }
+  .theme-excerpt .ex-date { font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-faint); flex-shrink: 0; width: 4.4rem; padding-top: 0.15rem; }
+
+  .empty-panel { color: var(--ink-faint); font-size: 0.94rem; max-width: 40ch; padding-top: 1rem; }
+
+  /* ---------------- composer ---------------- */
+  .composer-bar {
+    flex-shrink: 0; border-top: 1px solid var(--line); background: var(--paper-raised);
+    padding: 0.9rem 1.6rem; display: flex; gap: 0.75rem; align-items: flex-end;
+  }
+  #entryText {
+    flex: 1; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper);
+    color: var(--ink); font-family: var(--font-body); font-size: 0.98rem; line-height: 1.5;
+    padding: 0.7rem 0.85rem; resize: none; max-height: 9rem; min-height: 2.7rem;
+  }
+  #entryText::placeholder { color: var(--ink-faint); }
+
+  .composer-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+  .mic-btn {
+    display: inline-flex; align-items: center; gap: 0.45rem; height: 2.7rem;
+    border: 1px solid var(--line); background: transparent; color: var(--ink-soft);
+    border-radius: var(--radius); padding: 0 0.85rem; cursor: pointer; font-size: 0.85rem;
+  }
+  .mic-dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--ink-faint); }
+  .mic-btn.is-listening { border-color: var(--danger); color: var(--danger); }
+  .mic-btn.is-listening .mic-dot { background: var(--danger); }
+  @media (prefers-reduced-motion: no-preference) {
+    .mic-btn.is-listening .mic-dot { animation: pulse 1s ease-in-out infinite; }
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+  .btn-send {
+    height: 2.7rem; padding: 0 1.2rem; border-radius: var(--radius); border: 1px solid transparent;
+    background: var(--ink); color: var(--paper); font-size: 0.9rem; cursor: pointer;
+  }
+  .btn-send:hover { opacity: 0.86; }
+  .btn-send:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .voice-note {
+    position: absolute; bottom: 100%; left: 1.6rem; margin-bottom: 0.4rem;
+    font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-faint); max-width: 60ch;
+  }
+  .composer-bar { position: relative; }
+
+  /* ---------------- flight chips ---------------- */
+  .flight-chip {
+    position: fixed; z-index: 90; padding: 0.32rem 0.7rem; border-radius: 999px;
+    font-family: var(--font-mono); font-size: 0.76rem; pointer-events: none; white-space: nowrap;
+    top: 0; left: 0; opacity: 0;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .flight-chip { transition: transform 0.62s cubic-bezier(.22,1,.36,1), opacity 0.62s ease; }
+  }
+  .flight-chip.matched { background: color-mix(in srgb, var(--c) 24%, var(--paper-raised)); color: color-mix(in srgb, var(--c) 78%, var(--ink)); border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); }
+  .flight-chip.forming { background: var(--paper-raised); color: var(--accent); border: 1px solid var(--accent); }
+  .flight-chip.loose { background: transparent; color: var(--ink-faint); border: 1px dashed var(--line); }
+
+  /* ---------------- responsive ---------------- */
+  @media (max-width: 780px) {
+    .app-shell { flex-direction: column; }
+    .sidebar { width: 100%; max-height: 30vh; border-right: none; border-bottom: 1px solid var(--line); }
+    .main-head { padding: 1rem 1.1rem 0.8rem; }
+    .main-scroll { padding: 1rem 1.1rem; }
+    .composer-bar { padding: 0.8rem 1.1rem; }
+  }
+</style>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <span class="wordmark">Loam</span>
+      <p class="sidebar-label">Recent entries</p>
+    </div>
+    <div class="sidebar-list" id="sidebarList"></div>
+  </aside>
+
+  <div class="main-col">
+    <div class="main-head">
+      <div class="main-head-row">
+        <span class="main-title">Themes</span>
+        <div class="range-tabs" role="group" aria-label="Time range">
+          <button type="button" class="range-btn is-active" data-range="1w">1W</button>
+          <button type="button" class="range-btn" data-range="3m">3M</button>
+          <button type="button" class="range-btn" data-range="6m">6M</button>
+          <button type="button" class="range-btn" data-range="1y">1Y</button>
+          <button type="button" class="range-btn" data-range="all">All</button>
+        </div>
+      </div>
+      <p class="main-summary" id="mainSummary"></p>
+    </div>
+
+    <div class="main-scroll">
+      <div class="themes-panel" id="themesPanel"></div>
+    </div>
+
+    <div class="composer-bar">
+      <p class="voice-note" id="voiceNote"></p>
+      <textarea id="entryText" placeholder="What's actually on your mind right now?" rows="1"></textarea>
+      <div class="composer-actions">
+        <button type="button" class="mic-btn" id="micBtn">
+          <span class="mic-dot" aria-hidden="true"></span>
+          <span id="micLabel">Speak</span>
+        </button>
+        <button type="button" class="btn-send" id="sendBtn" disabled>Add entry</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var STORAGE_KEY = 'loam_entries_v2';
+    var palette = ['#3B6E64', '#5B6B7A', '#B9903E', '#A85C3E', '#7A8450', '#6B5B72'];
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var stopwords = new Set([
+      'the','and','that','have','for','not','with','you','this','but','his','her','they',
+      'from','she','will','would','there','their','what','about','which','when','were',
+      'been','being','just','really','today','than','then','them','into','over','also',
+      'still','some','more','most','only','very','your','yours','mine','ours','here',
+      'because','while','after','before','again','once','doing','does','did','didnt',
+      'dont','cant','wont','isnt','wasnt','arent','im','its','ive','youre','theyre',
+      'was','are','has','had','who','how','why','out','off','all','any','can',
+      'could','should','same','other','such','own','too','each','both','get','got',
+      'going','goes','went','feel','feels','felt','like','think','thinking','know',
+      'knew','want','wanted','need','needed','make','made','maybe','actually','thing',
+      'things','something','someone','everything','everyone','right','back','even'
+    ]);
+
+    var rangeLabels = { '1w': 'the last week', '3m': 'the last 3 months', '6m': 'the last 6 months', '1y': 'the last year', 'all': 'all time' };
+    var currentRange = '1w';
+
+    var els = {
+      sidebarList: document.getElementById('sidebarList'),
+      themesPanel: document.getElementById('themesPanel'),
+      mainSummary: document.getElementById('mainSummary'),
+      rangeBtns: document.querySelectorAll('.range-btn'),
+      entryText: document.getElementById('entryText'),
+      sendBtn: document.getElementById('sendBtn'),
+      micBtn: document.getElementById('micBtn'),
+      micLabel: document.getElementById('micLabel'),
+      voiceNote: document.getElementById('voiceNote')
+    };
+
+    function loadEntries() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch (e) { return []; }
+    }
+    function saveEntries() { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); }
+    var entries = loadEntries();
+
+    function fmtDate(ts) {
+      return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    }
+
+    // ---------------- word extraction ----------------
+    function extractWords(text) {
+      var seen = [];
+      var seenSet = new Set();
+      var raw = text.toLowerCase().replace(/[^a-z0-9' ]/g, ' ').split(/\s+/);
+      raw.forEach(function (w) {
+        w = w.replace(/'s$/, '').replace(/(ing|ed|es|s)$/, function (m) {
+          return w.length - m.length >= 3 ? '' : m;
+        });
+        if (!w || w.length < 4 || stopwords.has(w) || seenSet.has(w)) return;
+        seenSet.add(w);
+        seen.push(w);
+      });
+      return seen;
+    }
+
+    function cutoffFor(range) {
+      var d = new Date();
+      if (range === '1w') d.setDate(d.getDate() - 7);
+      else if (range === '3m') d.setMonth(d.getMonth() - 3);
+      else if (range === '6m') d.setMonth(d.getMonth() - 6);
+      else if (range === '1y') d.setFullYear(d.getFullYear() - 1);
+      else return 0;
+      return d.getTime();
+    }
+
+    function entriesInRange(range) {
+      var cutoff = cutoffFor(range);
+      return entries.filter(function (e) { return e.createdAt >= cutoff; });
+    }
+
+    function computeThemes(range) {
+      var subset = entriesInRange(range);
+      var wordMap = {};
+      subset.forEach(function (entry) {
+        extractWords(entry.text).forEach(function (w) {
+          if (!wordMap[w]) wordMap[w] = [];
+          wordMap[w].push(entry);
+        });
+      });
+      return Object.keys(wordMap)
+        .map(function (w) { return { word: w, items: wordMap[w] }; })
+        .filter(function (t) { return t.items.length >= 2; })
+        .sort(function (a, b) { return b.items.length - a.items.length; });
+    }
+
+    // ---------------- sidebar ----------------
+    function renderSidebar(animateNewest) {
+      if (!entries.length) {
+        els.sidebarList.innerHTML = '<p class="sidebar-empty">Nothing yet — your first entry will show up here.</p>';
+        return;
+      }
+      els.sidebarList.innerHTML = '';
+      entries.forEach(function (entry, i) {
+        var row = document.createElement('div');
+        row.className = 'sidebar-entry';
+        if (animateNewest && i === 0) row.classList.add('entry-enter');
+
+        var dateRow = document.createElement('div');
+        dateRow.className = 'sidebar-entry-date';
+        var date = document.createElement('span');
+        date.textContent = fmtDate(entry.createdAt);
+        var del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'sidebar-entry-del';
+        del.textContent = 'Delete';
+        del.addEventListener('click', function () { deleteEntry(entry.id); });
+        dateRow.appendChild(date);
+        dateRow.appendChild(del);
+
+        var text = document.createElement('p');
+        text.className = 'sidebar-entry-text';
+        text.textContent = entry.text;
+
+        row.appendChild(dateRow);
+        row.appendChild(text);
+        els.sidebarList.appendChild(row);
+
+        if (animateNewest && i === 0 && !reduceMotion) {
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () { row.classList.remove('entry-enter'); });
+          });
+        }
+      });
+    }
+
+    function deleteEntry(id) {
+      entries = entries.filter(function (e) { return e.id !== id; });
+      saveEntries();
+      renderSidebar(false);
+      renderThemesPanel({ flip: false });
+    }
+
+    // ---------------- themes panel ----------------
+    function buildCard(theme, index) {
+      var color = palette[index % palette.length];
+      var card = document.createElement('div');
+      card.className = 'theme-card';
+      card.dataset.key = theme.word;
+      card.style.setProperty('--c', color);
+      card.style.setProperty('--c-tint', 'color-mix(in srgb, ' + color + ' 35%, transparent)');
+
+      var head = document.createElement('div');
+      head.className = 'theme-head';
+      var name = document.createElement('span');
+      name.className = 'theme-name';
+      name.textContent = theme.word;
+      var count = document.createElement('span');
+      count.className = 'theme-count';
+      count.textContent = theme.items.length + ' entries';
+      head.appendChild(name);
+      head.appendChild(count);
+
+      var bar = document.createElement('div');
+      bar.className = 'theme-bar';
+      var fill = document.createElement('div');
+      fill.className = 'theme-bar-fill';
+      bar.appendChild(fill);
+
+      var excerpts = document.createElement('div');
+      excerpts.className = 'theme-excerpts';
+      theme.items.slice(0, 3).forEach(function (entry) {
+        var row = document.createElement('p');
+        row.className = 'theme-excerpt';
+        var d = document.createElement('span');
+        d.className = 'ex-date';
+        d.textContent = fmtDate(entry.createdAt);
+        var t = document.createElement('span');
+        var snippet = entry.text.length > 90 ? entry.text.slice(0, 90) + '…' : entry.text;
+        t.textContent = snippet;
+        row.appendChild(d);
+        row.appendChild(t);
+        excerpts.appendChild(row);
+      });
+
+      card.appendChild(head);
+      card.appendChild(bar);
+      card.appendChild(excerpts);
+      return { card: card, fill: fill };
+    }
+
+    function renderThemesPanel(opts) {
+      opts = opts || {};
+      var themes = computeThemes(currentRange);
+      var subsetCount = entriesInRange(currentRange).length;
+      els.mainSummary.textContent = subsetCount + (subsetCount === 1 ? ' entry' : ' entries') + ' · ' +
+        themes.length + (themes.length === 1 ? ' theme' : ' themes') + ' in ' + rangeLabels[currentRange];
+
+      var panel = els.themesPanel;
+
+      if (!themes.length) {
+        panel.innerHTML = '';
+        var empty = document.createElement('p');
+        empty.className = 'empty-panel';
+        empty.textContent = entries.length
+          ? 'No repeating themes in ' + rangeLabels[currentRange] + ' yet. Once a word or idea shows up in two entries, it will surface here.'
+          : 'Write your first entry below — themes form once an idea repeats.';
+        panel.appendChild(empty);
+        return;
+      }
+
+      var firstRects = {};
+      if (opts.flip) {
+        Array.prototype.forEach.call(panel.children, function (el) {
+          if (el.dataset && el.dataset.key) firstRects[el.dataset.key] = el.getBoundingClientRect();
+        });
+      }
+
+      panel.innerHTML = '';
+      var maxCount = themes[0].items.length;
+      var fills = [];
+      themes.forEach(function (theme, i) {
+        var built = buildCard(theme, i);
+        panel.appendChild(built.card);
+        fills.push({ el: built.fill, width: Math.round((theme.items.length / maxCount) * 100) });
+        if (opts.pulseWords && opts.pulseWords.has(theme.word)) {
+          built.card.classList.add('is-pulsing');
+          setTimeout((function (card) { return function () { card.classList.remove('is-pulsing'); }; })(built.card), 700);
+        }
+      });
+
+      if (reduceMotion) {
+        fills.forEach(function (f) { f.el.style.width = f.width + '%'; });
+      } else {
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            fills.forEach(function (f) { f.el.style.width = f.width + '%'; });
+          });
+        });
+      }
+
+      if (opts.flip && !reduceMotion) {
+        Array.prototype.forEach.call(panel.children, function (el) {
+          var key = el.dataset.key;
+          var first = firstRects[key];
+          if (first) {
+            var last = el.getBoundingClientRect();
+            var dx = first.left - last.left;
+            var dy = first.top - last.top;
+            if (dx || dy) {
+              el.style.transition = 'none';
+              el.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+              requestAnimationFrame(function () {
+                el.style.transition = 'transform 0.5s cubic-bezier(.22,1,.36,1)';
+                el.style.transform = '';
+              });
+            }
+          } else {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(8px) scale(0.97)';
+            requestAnimationFrame(function () {
+              el.style.transition = 'opacity 0.45s ease, transform 0.45s cubic-bezier(.22,1,.36,1)';
+              el.style.opacity = '1';
+              el.style.transform = '';
+            });
+          }
+        });
+      }
+    }
+
+    // ---------------- range tabs ----------------
+    els.rangeBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (btn.dataset.range === currentRange) return;
+        els.rangeBtns.forEach(function (b) { b.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+        currentRange = btn.dataset.range;
+
+        if (reduceMotion) {
+          renderThemesPanel({ flip: false });
+        } else {
+          els.themesPanel.classList.add('is-switching');
+          setTimeout(function () {
+            renderThemesPanel({ flip: false });
+            els.themesPanel.classList.remove('is-switching');
+          }, 180);
+        }
+      });
+    });
+
+    // ---------------- composer ----------------
+    function autosize() {
+      els.entryText.style.height = 'auto';
+      els.entryText.style.height = Math.min(els.entryText.scrollHeight, 144) + 'px';
+    }
+    els.entryText.addEventListener('input', function () {
+      autosize();
+      els.sendBtn.disabled = !els.entryText.value.trim();
+    });
+    els.entryText.addEventListener('keydown', function (e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        submitEntry();
+      }
+    });
+    els.sendBtn.addEventListener('click', submitEntry);
+
+    function spawnFlightChips(words, oldWordSet, newWordSet) {
+      var startRect = els.entryText.getBoundingClientRect();
+      var panelRect = els.themesPanel.getBoundingClientRect();
+      var chips = [];
+
+      words.forEach(function (word, i) {
+        var chip = document.createElement('span');
+        chip.className = 'flight-chip';
+        chip.textContent = word;
+
+        var startX = startRect.left + 16 + (i * 14);
+        var startY = startRect.top + 10;
+        chip.style.transform = 'translate(' + startX + 'px,' + startY + 'px)';
+
+        var kind, targetX, targetY;
+        if (oldWordSet[word]) {
+          kind = 'matched';
+          var r = oldWordSet[word];
+          targetX = r.left + r.width / 2 - 20;
+          targetY = r.top + 14;
+          chip.style.setProperty('--c', r.color);
+        } else if (newWordSet.has(word)) {
+          kind = 'forming';
+          targetX = panelRect.left + 30 + (i % 3) * 12;
+          targetY = panelRect.top + 24 + (i % 3) * 10;
+        } else {
+          kind = 'loose';
+          targetX = startX + (i % 2 === 0 ? -10 : 10);
+          targetY = startY - 34;
+        }
+        chip.classList.add(kind);
+        document.body.appendChild(chip);
+        chips.push({ el: chip, targetX: targetX, targetY: targetY, kind: kind });
+      });
+
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          chips.forEach(function (c) {
+            c.el.style.opacity = c.kind === 'loose' ? '0.9' : '1';
+            c.el.style.transform = 'translate(' + c.targetX + 'px,' + c.targetY + 'px) scale(' + (c.kind === 'loose' ? 0.85 : 0.7) + ')';
+            if (c.kind !== 'loose') c.el.style.transitionDelay = '0s';
+          });
+          setTimeout(function () {
+            chips.forEach(function (c) { c.el.style.opacity = '0'; });
+          }, 380);
+        });
+      });
+
+      return new Promise(function (resolve) {
+        setTimeout(function () {
+          chips.forEach(function (c) { c.el.remove(); });
+          resolve();
+        }, 660);
+      });
+    }
+
+    function submitEntry() {
+      var text = els.entryText.value.trim();
+      if (!text) return;
+
+      var words = extractWords(text);
+
+      var oldWordSet = {};
+      Array.prototype.forEach.call(els.themesPanel.children, function (el) {
+        if (el.dataset && el.dataset.key) {
+          var r = el.getBoundingClientRect();
+          r.color = getComputedStyle(el).getPropertyValue('--c').trim();
+          oldWordSet[el.dataset.key] = r;
+        }
+      });
+
+      entries.unshift({ id: Date.now(), text: text, createdAt: Date.now() });
+      saveEntries();
+      renderSidebar(true);
+
+      els.entryText.value = '';
+      autosize();
+      els.sendBtn.disabled = true;
+
+      var newThemes = computeThemes(currentRange);
+      var newWordSet = new Set(newThemes.map(function (t) { return t.word; }));
+      var pulseWords = new Set(words.filter(function (w) { return oldWordSet[w]; }));
+
+      if (reduceMotion || !words.length) {
+        renderThemesPanel({ flip: true, pulseWords: pulseWords });
+        return;
+      }
+
+      spawnFlightChips(words, oldWordSet, newWordSet).then(function () {
+        renderThemesPanel({ flip: true, pulseWords: pulseWords });
+      });
+    }
+
+    // ---------------- voice input ----------------
+    var Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var listening = false;
+    var recognition = null;
+    var baseText = '';
+
+    if (!Recognition) {
+      els.micBtn.disabled = true;
+      els.voiceNote.textContent = 'Voice input isn\'t supported in this browser — Chrome and Edge support it, Safari and Firefox currently don\'t.';
+    } else {
+      recognition = new Recognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = function (event) {
+        var finalText = '';
+        var interimText = '';
+        for (var i = 0; i < event.results.length; i++) {
+          var transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) finalText += transcript;
+          else interimText += transcript;
+        }
+        els.entryText.value = (baseText + ' ' + finalText + ' ' + interimText).trim();
+        autosize();
+        els.sendBtn.disabled = !els.entryText.value.trim();
+      };
+
+      recognition.onend = function () {
+        listening = false;
+        els.micBtn.classList.remove('is-listening');
+        els.micLabel.textContent = 'Speak';
+      };
+
+      recognition.onerror = function (event) {
+        listening = false;
+        els.micBtn.classList.remove('is-listening');
+        els.micLabel.textContent = 'Speak';
+        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+          els.voiceNote.textContent = 'Microphone access was blocked — allow it in your browser\'s site settings to use voice entries.';
+        } else if (event.error !== 'aborted') {
+          els.voiceNote.textContent = 'Voice input hit an error (' + event.error + '). You can still type.';
+        }
+      };
+
+      els.micBtn.addEventListener('click', function () {
+        if (listening) { recognition.stop(); return; }
+        baseText = els.entryText.value;
+        els.voiceNote.textContent = '';
+        try {
+          recognition.start();
+          listening = true;
+          els.micBtn.classList.add('is-listening');
+          els.micLabel.textContent = 'Listening…';
+        } catch (e) {
+          els.voiceNote.textContent = 'Could not start the microphone. Try again in a moment.';
+        }
+      });
+    }
+
+    renderSidebar(false);
+    renderThemesPanel({ flip: false });
+  })();
+</script>

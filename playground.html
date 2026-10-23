@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Play — Kalyn Watt</title>
+  <meta name="description" content="Personal side projects, writing, music, and photography from Kalyn Watt, outside of client and professional work.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=177">
+</head>
+<body class="page-landing">
+
+  <header class="landing-header">
+    <a class="landing-logo" href="index.html">
+      <span class="landing-logo-dot"></span>
+      <span class="landing-logo-text">kalyn watt / design</span>
+    </a>
+  </header>
+
+  <main class="landing-play">
+    <div class="landing-tabs">
+      <a class="landing-tab" href="index.html">
+        <span>WORK</span>
+        <span class="landing-tab-line"><img src="assets/tab-line-inactive.svg" alt=""></span>
+      </a>
+      <a class="landing-tab" href="playground.html" aria-current="page">
+        <span>PLAY</span>
+        <span class="landing-tab-line landing-tab-line--active"><img src="assets/tab-line-active.svg" alt=""></span>
+      </a>
+        <a class="landing-tab" href="about.html">
+          <span>ABOUT</span>
+          <span class="landing-tab-line"><img src="assets/tab-line-inactive.svg" alt=""></span>
+        </a>
+    </div>
+
+    <p class="play-intro">Delightful and introspective. <span class="play-swap"><span class="play-swap-a">Journal.</span><span class="play-swap-b">Where ideas are written.</span></span> <span class="play-swap"><span class="play-swap-a">Playground.</span><span class="play-swap-b">Where ideas are tinkered with.</span></span> <span class="play-swap"><span class="play-swap-a">Tomb.</span><span class="play-swap-b">Where ideas go to die... and come back to life.</span></span> The big house.</p>
+
+    <div class="play-list">
+      <section class="play-month">
+        <h2 class="play-month-label">OCTOBER 2026</h2>
+        <ul class="play-entries">
+          <li class="play-entry">
+            <span class="play-entry-title">11 | April Day (ongoing)</span>
+            <span class="play-tags"><span class="play-tag play-tag--pink">Art &amp; design</span></span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="play-month">
+        <h2 class="play-month-label">FEBRUARY 2026</h2>
+        <ul class="play-entries">
+          <li class="play-entry" data-thumb-video>
+            <a class="play-entry-title" href="screambox.html">11 | Screambox: Touch sensor distortion amplifier</a>
+            <span class="play-tags">
+              <span class="play-tag play-tag--pink">Art &amp; design</span>
+              <span class="play-tag play-tag--black">Music</span>
+            </span>
+          </li>
+          <li class="play-entry" data-thumb-emoji>
+            <a class="play-entry-title" href="house-of-dreams.html">12 | House of dreams: Why I built this space</a>
+            <span class="play-tags"><span class="play-tag play-tag--yellow">Writing</span></span>
+          </li>
+          <li class="play-entry" data-dither>
+            <a class="play-entry-title" href="cognitive-dissonance.html">25 | Cognitive dissonance as friction</a>
+            <span class="play-tags"><span class="play-tag play-tag--yellow">Writing</span></span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="play-month">
+        <h2 class="play-month-label">JANUARY 2026</h2>
+        <ul class="play-entries">
+          <li class="play-entry" data-thumb-image>
+            <a class="play-entry-title" href="lamma-island.html">26 | A retrospective on Lamma Island</a>
+            <span class="play-tags">
+              <span class="play-tag play-tag--pink">Art &amp; design</span>
+              <span class="play-tag play-tag--cyan">Photography</span>
+            </span>
+          </li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="play-thumb" aria-hidden="true">
+      <video src="assets/screambox/step2-solder.mp4" muted loop playsinline preload="none"></video>
+    </div>
+
+    <div class="play-thumb play-thumb--image" aria-hidden="true">
+      <img src="assets/lamma/yinyang.jpg" alt="">
+    </div>
+
+    <div class="play-emoji" aria-hidden="true">&#127968;</div>
+
+    <div class="play-dither" aria-hidden="true">
+      <canvas></canvas>
+    </div>
+  </main>
+
+  <script src="dither.js"></script>
+  <script>
+    (function () {
+      function bindThumb(row, panel) {
+        if (!row || !panel) return;
+        var video = panel.querySelector("video");
+        var pauseTimer;
+
+        function follow(e) {
+          panel.style.transform = "translate(" + e.clientX + "px, " + e.clientY + "px) translate(-50%, -50%)";
+        }
+
+        row.addEventListener("mouseenter", function (e) {
+          clearTimeout(pauseTimer);
+          follow(e);
+          panel.classList.add("is-active");
+          if (video) {
+            var p = video.play();
+            if (p && p.catch) p.catch(function () {});
+          }
+        });
+        row.addEventListener("mousemove", follow);
+        row.addEventListener("mouseleave", function () {
+          panel.classList.remove("is-active");
+          if (video) pauseTimer = setTimeout(function () { video.pause(); }, 400);
+        });
+      }
+
+      bindThumb(document.querySelector("[data-thumb-video]"), document.querySelector(".play-thumb:not(.play-thumb--image)"));
+      bindThumb(document.querySelector("[data-thumb-image]"), document.querySelector(".play-thumb--image"));
+      bindThumb(document.querySelector("[data-thumb-emoji]"), document.querySelector(".play-emoji"));
+    })();
+  </script>
+  <script>
+    (function () {
+      var swaps = document.querySelectorAll(".play-swap");
+      function measure() {
+        swaps.forEach(function (el) {
+          var a = el.querySelector(".play-swap-a");
+          var b = el.querySelector(".play-swap-b");
+          el.classList.add("is-smooth");
+          el.style.setProperty("--swap-a", a.getBoundingClientRect().width + "px");
+          el.style.setProperty("--swap-b", b.getBoundingClientRect().width + "px");
+        });
+      }
+      measure();
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+      window.addEventListener("resize", measure);
+    })();
+  </script>
+</body>
+</html>
